@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>wss</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    
+        
+        <div class="center">
+            <div id="cover">
+                <div class="tb">
+                    <div class="td"><input id="searchbox" type="text" placeholder="WSS" required></div>
+                    <div class="td" id="s-cover">
+                    <button onClick="searchf()">
+                        <div id="s-circle"></div>
+                        <span></span>
+                    </button>
+                    </div>
+                </div>
+            </div>
+            <div id="results">
+                
+            </div>
+        </div>
+        
+        
+        <script>
+            $("#results").hide();
+            function searchf() {
+                $.ajax({
+                    type: "POST",
+                    url: "https://wssapi.wsm001.repl.co/api/v1/search",
+                    data: JSON.stringify({"text": $("#searchbox").val(), "lang":"ru", "num_res":10}),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function(data){
+                        if (data["error"]==1) {
+                            $("#cover").html("Ошибка... Мы уже работаем над ней, извините за неудобства!");
+                            console.log("error");
+                        } else {
+                            $("#results").html("");
+                            $("#results").show();
+                            data["res"].map(function(item){
+                                $("#results").html($("#results").html()+"<div><a href='"+item["url"]+"'>"+item["url"]+"</a></div>");
+                            });
+                        }
+                    },
+                    error: function(){
+                        $("#cover").html("Ошибка... Мы уже работаем над ней, извините за неудобства!");
+                        console.log("error");
+                    }
+                });
+            }
+            $("#searchbox").keyup(function(event){
+                if(event.keyCode == 13){
+                    searchf();
+                }
+            });
+        </script>
+    </body>
+</html>
